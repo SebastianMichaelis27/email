@@ -1,0 +1,39 @@
+<IfModule mod_rewrite.c>
+RewriteEngine On
+
+# Jika file atau folder asli ada, maka stop
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Jangan rewrite admin dan test
+RewriteCond %{REQUEST_URI} !^/(admin|test)(/.*)?$
+
+# =========================================
+# 4 SEGMENT
+# contoh: form/kategori/laptop/2
+#RewriteRule ^([^/]+)/([^/]+)/([^/]+)/([0-9]+)/?$ index.php?form=$1&kategori=$2&pencarian=$3&page=$4 [L,QSA]
+
+# 3 SEGMENT
+# contoh: form/kategori/laptop
+# RewriteRule ^([^/]+)/([^/]+)/([^/]+)/?$ index.php?form=$1&kategori=$2&pencarian=$3 [L,QSA]
+
+
+# 3 SEGMENT
+RewriteRule ^([^/]+)/([0-9]+)/([^/]+)/?$ index.php?form=$1&page=$2&kategori=$3 [L,QSA]
+
+
+# 2 SEGMENT (angka page)
+# contoh: form/2
+RewriteRule ^([^/]+)/([0-9]+)/?$ index.php?form=$1&page=$2 [L,QSA]
+
+# 2 SEGMENT (non angka)
+# contoh: form/kategori
+RewriteRule ^([^/]+)/([^/]+)/?$ index.php?form=$1&kategori=$2 [L,QSA]
+
+# 1 SEGMENT
+# contoh: form
+RewriteRule ^([^/]+)/?$ index.php?form=$1 [L,QSA]
+
+Header set Access-Control-Allow-Origin "*"
+</IfModule>
