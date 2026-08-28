@@ -11,9 +11,16 @@
  $data = $result->fetch_assoc();
  $password = $data['password'] ?? '';
 
+ include '../../plugin/ssilence/php-imap-client/ImapClient/Section.php';
  include '../../plugin/ssilence/php-imap-client/ImapClient/ImapClientException.php';
  include '../../plugin/ssilence/php-imap-client/ImapClient/ImapConnect.php';
  include '../../plugin/ssilence/php-imap-client/ImapClient/ImapClient.php';
+ include '../../plugin/ssilence/php-imap-client/ImapClient/IncomingMessage.php';
+ include '../../plugin/ssilence/php-imap-client/ImapClient/TypeAttachments.php';
+ include '../../plugin/ssilence/php-imap-client/ImapClient/HelperObject.php';
+ include '../../plugin/ssilence/php-imap-client/ImapClient/TypeBody.php';
+ include '../../plugin/ssilence/php-imap-client/ImapClient/SubtypeBody.php';
+ include '../../plugin/ssilence/php-imap-client/ImapClient/IncomingMessageAttachment.php';
 
  use SSilence\ImapClient\ImapClientException;
  use SSilence\ImapClient\ImapConnect;
@@ -54,16 +61,33 @@
   $password
  );
 
- $unreadEmails = imap_search($connection, 'UNSEEN');
+ $overallMessages = 8;
+ $emails = $imap->getMessage($overallMessages);
+ //$content = json_decode(json_encode($emails->message->html), true);
+ //$attachments = json_decode(json_encode($emails->attachments), true);
+
+ $rawHeader = imap_fetchheader($connection, $overallMessages);
+ preg_match('/Message-ID: &lt;(.*?)&gt;/', htmlspecialchars($rawHeader), $matches);
+ $messageId = $matches[1] ?? '';
+
+echo $messageId;
+
+
+//for($i=0; $i<strlen($temp); $i++)
+ //{ echo substr($temp, $i, 1)."<br>";
+// }
+
+ /*$unreadEmails = imap_search($connection, 'UNSEEN');
 
  if($unreadEmails)
   { //rsort($unreadEmails);
     foreach ($unreadEmails as $emailNumber)
-     { //$overallMessages = $unreadEmails[0];
-       //$emails = $imap->getMessage($overallMessages);
-       echo $emailNumber."<br>";
+     { $overallMessages = $unreadEmails[$emailNumber];
+       $emails = $imap->getMessage($overallMessages);
+       $content = json_decode(json_encode($emails->message->html), true);
+       $attachments = json_decode(json_encode($emails->attachments), true);
      }
-  }
+  }*/
 
  /*$overallMessages = 1;
 
