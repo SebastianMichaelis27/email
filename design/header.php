@@ -775,6 +775,14 @@
   .color-red
    { color : red;
    }
+  .text-titik-titik
+   { width : 100%;
+     overflow : hidden;
+     text-overflow : ellipsis;
+     display: -webkit-box;
+     -webkit-line-clamp: 1; /* Jumlah baris maksimal */
+     -webkit-box-orient: vertical;
+   }
  </style>
 </head>
 <body>

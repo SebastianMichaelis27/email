@@ -9,4 +9,14 @@
  $now = date('Y-m-d H:i:s');
  $koneksi = mysqli_connect("localhost", "root", "", "email") or die("Koneksi gagal!");
  mysqli_set_charset($koneksi, "utf8mb4");
+
+ function pastikanNamaFileUnik($dir, $nama, $index = 1)
+  { if(file_exists($dir.$nama))
+     { $extension = ".".pathinfo($nama, PATHINFO_EXTENSION);
+       $nama = str_replace($extension, "", $nama)." ".$index.$extension;
+       $index++;
+       $nama = pastikanNamaFileUnik($dir, $nama, $index);
+     }
+    return $nama;
+  }
 ?>

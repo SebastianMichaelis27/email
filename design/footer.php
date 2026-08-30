@@ -94,6 +94,31 @@
 
   loadMenu();
 
+  getIncomingEmail();
+
+  function getIncomingEmail()
+   { var formdata = new FormData();
+     formdata.append('username', document.querySelector('.user-name').value);
+     formdata.append('token', document.querySelector('.user-token').value);
+     var ajax = new XMLHttpRequest();
+     ajax.addEventListener('load', responseGetIncomingEmail, false);
+     ajax.open('POST', '<?= $url ?>/action/index/get-incoming-email.php', true);
+     ajax.send(formdata);
+   }
+
+  function responseGetIncomingEmail()
+   { var a = document.createElement('div');
+     a.innerHTML = event.srcElement.response;
+     if(a.querySelectorAll('new').length > 0)
+      { getIncomingEmail();
+      }
+     else
+      { setTimeout(function() {
+         getIncomingEmail();
+        }, 5000);
+      }
+   }
+
   function setUbahPassword()
    { document.getElementById('ubah_password-password_lama').value = '';
      document.getElementById('ubah_password-password_lama').parentNode.parentNode.querySelector('.error-input').innerHTML = '';
