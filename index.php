@@ -30,8 +30,11 @@
 
  session_start();
  if(isset($_POST['btn_login']))
-  { $_SESSION['username'] = $_POST['username'];
+  { $_SESSION['user_id'] = $_POST['user_id'];
+    $_SESSION['username'] = $_POST['username'];
     $_SESSION['token'] = $_POST['token'];
+    $_SESSION['users_level_id'] = $_POST['users_level_id'];
+    $_SESSION['cabang_id'] = $_POST['cabang_id'];
     header('Location: email-masuk');
   }
 
@@ -43,11 +46,20 @@
   { include("login.php");
   }
  else if($_GET['form'] == "logout")
-  { if(isset($_SESSION['username']))
+  { if(isset($_SESSION['user_id']))
+     { unset($_SESSION['user_id']);
+     }
+    if(isset($_SESSION['username']))
      { unset($_SESSION['username']);
      }
     if(isset($_SESSION['token']))
      { unset($_SESSION['token']);
+     }
+    if(isset($_SESSION['users_level_id']))
+     { unset($_SESSION['users_level_id']);
+     }
+    if(isset($_SESSION['cabang_id']))
+     { unset($_SESSION['cabang_id']);
      }
     header('Location: .');
   }

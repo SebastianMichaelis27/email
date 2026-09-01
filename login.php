@@ -1,7 +1,7 @@
 <?php
  include("design/url.php");
  if(isset($_SESSION['user_id']) && $_SESSION['user_id'] !== "")
-  { header('Location: home');
+  { header('Location: email-masuk');
   }
 ?>
 <html>
@@ -179,7 +179,7 @@
    </div>
    <div>
     <div class="box-password">
-     <input type="password" autocomplete="new-password" id="password" placeholder="Password" onkeypress="loginEvent(event);" value="infonSyalomNias991!%">
+     <input type="password" autocomplete="new-password" id="password" placeholder="Password" onkeypress="loginEvent(event);" value="sebastian27">
      <i class="far fa-eye" onclick="viewPassword(this);"></i>
     </div>
     <div class="error error-password"></div>
@@ -236,8 +236,11 @@
      if(response.querySelectorAll('.proses-berhasil').length > 0)
       { document.getElementById('div-result').innerHTML = `
          <form method="post">
+          <textarea name="user_id">` + response.querySelector('.proses-berhasil .id').value + `</textarea>
           <textarea name="username">` + response.querySelector('.proses-berhasil .username').value + `</textarea>
           <textarea name="token">` + response.querySelector('.proses-berhasil .token').value + `</textarea>
+          <textarea name="users_level_id">` + response.querySelector('.proses-berhasil .users_level_id').value + `</textarea>
+          <textarea name="cabang_id">` + response.querySelector('.proses-berhasil .cabang_id').value + `</textarea>
           <button type="submit" name='btn_login' id='btn_login'></button>
          </form>
         `;

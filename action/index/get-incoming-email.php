@@ -1,5 +1,5 @@
 <?php
- include("../akjja012j19210239.php");
+ include("../bjksadkhrej121lkjkjk.php");
 
  $is_commit = 1;
  mysqli_autocommit($koneksi, FALSE);
@@ -7,8 +7,8 @@
  $username = $_POST['username'] ?? '';
  $token = $_POST['token'] ?? '';
 
- $sql = $koneksi->prepare("select aes_decrypt(unhex(?), 'Kjsd902Jks97161h1kd') as password");
- $sql->bind_param('s', $token);
+ $sql = $koneksi->prepare("select aes_decrypt(unhex(pass_email), 'Kjsd902Jks97161h1kd') as password from users where username = ?");
+ $sql->bind_param('s', $username);
  $sql->execute();
  $result = $sql->get_result();
  $data = $result->fetch_assoc();
@@ -95,11 +95,12 @@
        $data[] = $date;
        $data[] = $message_id;
        $data[] = $body;
+       $data[] = $user_id;
 
        $params = implode(',', array_fill(0, count($data), '?'));
        $types = implode('', array_fill(0, count($data), 's'));
 
-       $sql = $koneksi->prepare("insert into incoming_email(`subject`, `from`, `to`, `date`, `message_id`, `body`) values(".$params.")");
+       $sql = $koneksi->prepare("insert into incoming_email(`subject`, `from`, `to`, `date`, `message_id`, `body`, `users_id`) values(".$params.")");
        $sql->bind_param($types, ...$data);
        if($sql->execute())
         { $id = $sql->insert_id;
@@ -107,11 +108,12 @@
            { $data2 = array();
              $data2[] = $id;
              $data2[] = $value->name;
+             $data2[] = date('Y-m-d H:i:s');
              $data2[] = $value->body;
              $params2 = implode(',', array_fill(0, count($data2), '?'));
              $types2 = implode('', array_fill(0, count($data2), 's'));
 
-             $sql2 = $koneksi->prepare("insert into incoming_email_attachments(`incoming_email_id`, `name`, `body`) values(".$params2.")");
+             $sql2 = $koneksi->prepare("insert into incoming_email_attachments(`incoming_email_id`, `name`, `date_time`, `body`) values(".$params2.")");
              $sql2->bind_param($types2, ...$data2);
              if(!$sql2->execute())
               { $is_commit = 0;

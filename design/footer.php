@@ -98,8 +98,11 @@
 
   function getIncomingEmail()
    { var formdata = new FormData();
+     formdata.append('user_id', document.querySelector('.user-id').value);
      formdata.append('username', document.querySelector('.user-name').value);
      formdata.append('token', document.querySelector('.user-token').value);
+     formdata.append('users_level_id', document.querySelector('.user-level_id').value);
+     formdata.append('cabang_id', document.querySelector('.user-cabang_id').value);
      var ajax = new XMLHttpRequest();
      ajax.addEventListener('load', responseGetIncomingEmail, false);
      ajax.open('POST', '<?= $url ?>/action/index/get-incoming-email.php', true);
@@ -115,7 +118,7 @@
      else
       { setTimeout(function() {
          getIncomingEmail();
-        }, 5000);
+        }, 600000);
       }
    }
 

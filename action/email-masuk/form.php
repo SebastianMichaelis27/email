@@ -33,7 +33,6 @@
   <button type="button" class="btn-default" onclick="segarkan();">Segarkan <i class="fas fa-sync-alt"></i></button>
   <button type="button" class="btn-default btn-pencarian" onclick="pencarian();">Cari <i class="fas fa-search"></i></button>
   <button type="button" class="btn-default btn-urutan" onclick="setUrutan();">Urutkan <i class="fas fa-sort-amount-down-alt"></i></button>
-  <button type="button" class="btn-default" onclick="tambahData();">Tambah <i class="fas fa-plus"></i></button>
  </div>
  <div class="allow-scroll-x" id="div-result"></div>
 </div>
@@ -49,50 +48,14 @@
    </div>
    <div class="modal-body">
     <div class="form-input">
-     <b>Jenis Barang *</b>
+     <b>From</b>
      <div>
-      <select required class="field-input" id="jenis_barang_id">
-       <?= $list_jenis_barang ?>
-      </select>
+      <input type="text" class="field-input" required autocomplete="new-password" id="from">
       <div class="error-input"></div>
      </div>
-     <b>Kode Barang</b>
+     <b>Subject</b>
      <div>
-      <input type="text" class="field-input" autocomplete="new-password" id="kode_barang">
-      <div class="error-input"></div>
-     </div>
-     <b>Nama Barang *</b>
-     <div>
-      <input type="text" class="field-input" required autocomplete="new-password" id="nama_barang">
-      <div class="error-input"></div>
-     </div>
-     <b>Merek *</b>
-     <div>
-      <select required class="field-input" id="merek_id">
-       <?= $list_merek ?>
-      </select>
-      <div class="error-input"></div>
-     </div>
-     <b>Tipe</b>
-     <div>
-      <textarea class="field-input" autocorrect="off" autocomplete="off" spellcheck="false" oninput="auto_grow(this);" id="tipe"></textarea>
-      <div class="error-input"></div>
-     </div>
-     <b>Satuan *</b>
-     <div>
-      <select required class="field-input" id="satuan_id">
-       <?= $list_satuan ?>
-      </select>
-      <div class="error-input"></div>
-     </div>
-     <b>Harga Modal *</b>
-     <div>
-      <input type="text" class="field-input" autocomplete="new-password" onkeypress="return hanyaAngka(this);" onkeyup="fnomor(this);" onchange="fnomor(this);" onfocus="this.select();" onfocusout="fnomor2(this);" required id="harga_modal">
-      <div class="error-input"></div>
-     </div>
-     <b>Harga Jual *</b>
-     <div>
-      <input type="text" class="field-input" autocomplete="new-password" onkeypress="return hanyaAngka(this);" onkeyup="fnomor(this);" onchange="fnomor(this);" onfocus="this.select();" onfocusout="fnomor2(this);" required id="harga_jual">
+      <input type="text" class="field-input" required autocomplete="new-password" id="subject">
       <div class="error-input"></div>
      </div>
     </div>
@@ -186,11 +149,25 @@
  </div>
 </div>
 
+<div class="modal" id="popUpView">
+ <div class="modal-dialog">
+  <div class="modal-content" style="max-width:1000px;">
+   <div class="modal-header success">
+    <div class="modal-title">Email Masuk</div>
+    <div class="close" onclick="hideModal('popUpView');">&times</div>
+   </div>
+   <div class="modal-body"></div>
+   <div class="modal-footer">
+    <button type="button" class="btn-default" onclick="hideModal('popUpView');"><i class="fas fa-times"></i> Tutup</button>
+   </div>
+  </div>
+ </div>
+</div>
+
 <script type="text/javascript">
 
- var Nama_Tabel = 'barang';
+ var Nama_Tabel = 'incoming_email';
  var maxRecord = 20;
- var FieldTidakBolehRangkap = {};
 
  var a = document.querySelectorAll('.field-input');
  for(var i=0; i<a.length; i++)
@@ -206,18 +183,47 @@
   
  setSelectChosen(document.querySelector("#field_pencarian"));
  setSelectChosen(document.querySelector("#jenis_pencarian"));
- setSelectChosen(document.querySelector("#jenis_barang_id"), '');
- setSelectChosen(document.querySelector("#merek_id"), '');
- setSelectChosen(document.querySelector("#satuan_id"), '');
  setInputHalaman(document.querySelector("#txthalaman"));
 
  function tampil()
-  { var formdata = new FormData();
+  { if(document.getElementById('saved-pencarian').value == '' || document.getElementById('saved-pencarian').value == '[]')
+     { document.querySelector('.btn-pencarian').className = 'btn-default btn-pencarian';
+     }
+    else
+     { document.querySelector('.btn-pencarian').className = 'btn-success btn-pencarian';
+     }
+    if(document.getElementById('saved-urutan').value == '' || document.getElementById('saved-urutan').value == '[]')
+     { document.querySelector('.btn-urutan').className = 'btn-default btn-urutan';
+     }
+    else
+     { document.querySelector('.btn-urutan').className = 'btn-brown btn-urutan';
+     }
+    var format_khusus = {};
+    var a = document.querySelectorAll('.field-input');
+    for(var i=0; i<a.length; i++)
+     { if(a[i].parentNode.classList.contains('box-input-calender'))
+        { format_khusus[a[i].id] = 'tanggal';
+        }
+       else if(a[i].onkeypress)
+        { if(a[i].onkeypress.toString().includes('hanyaAngka'))
+           { format_khusus[a[i].id] = 'nomor';
+           }
+        }
+     }
+    var formdata = new FormData();
+    formdata.append('user_id', document.querySelector('.user-id').value);
     formdata.append('username', document.querySelector('.user-name').value);
     formdata.append('token', document.querySelector('.user-token').value);
+    formdata.append('users_level_id', document.querySelector('.user-level_id').value);
+    formdata.append('cabang_id', document.querySelector('.user-cabang_id').value);
     formdata.append('halaman', document.querySelector('#txthalaman').value);
+    formdata.append('Nama_Tabel', Nama_Tabel);
     formdata.append('maxRecord', maxRecord);
     formdata.append('cari', document.getElementById('saved-pencarian').value);
+    formdata.append('urutan', document.getElementById('saved-urutan').value);
+    Object.entries(format_khusus).forEach(function([index, item]) {
+     formdata.append('format_khusus[' + index + ']', item);
+    });
     var ajax = new XMLHttpRequest();
     ajax.addEventListener('load', responseTampil, false);
     ajax.open('POST', '<?= $_POST['url'] ?>/action/<?= $_POST['form'] ?>/tampil.php', true);
@@ -251,8 +257,6 @@
     tampil();
   }
 
- document.getElementsByClassName('loader')[0].style['display'] = 'block';
- document.getElementsByClassName('loader-block')[0].style['display'] = 'block';
  tampil();
 
  function clear()
@@ -525,6 +529,88 @@
      }
     catch(err) {}
     showModal('popUpUrutkan');
+  }
+
+ function tambahUrutan(field_selected = '', jenis_selected = '')
+  { var list_urutan = '<option></option>';
+    var a = document.querySelectorAll('.field-input');
+    for(var i=0; i<a.length; i++)
+     { var parent = a[i].parentNode;
+       if(a[i].parentNode.classList.contains('custom-select') || a[i].parentNode.classList.contains('multiple-select'))
+        { parent = a[i].parentNode.parentNode;
+        }
+       else if(a[i].parentNode.classList.contains('box-input-calender'))
+        { parent = a[i].parentNode.parentNode.parentNode;
+        }
+       list_urutan += '<option value="' + a[i].id + '">' + parent.previousElementSibling.textContent.toString().replaceAll('*', '').trim() + '</option>';
+     }
+    list_urutan += '<option value="date">Date</option>';
+    var new_element = document.createElement('div');
+    new_element.className = 'list-urutan';
+    new_element.innerHTML = `<select class="field-urutan">` + list_urutan + `</select>
+                             <select class="jenis-urutan">
+                              <option></option>
+                              <option value='az'>AZ</option>
+                              <option value='za'>ZA</option>
+                             </select>
+                             <button type="button" class="btn-default" onclick="removeUrutan(this);"><i class="far fa-trash-alt"></i></button>`;
+    document.getElementById('list-urutan').appendChild(new_element);
+    document.querySelectorAll('.field-urutan')[document.querySelectorAll('.field-urutan').length - 1].value = field_selected;
+    document.querySelectorAll('.jenis-urutan')[document.querySelectorAll('.jenis-urutan').length - 1].value = jenis_selected;
+    setSelectChosen(document.querySelectorAll('.field-urutan')[document.querySelectorAll('.field-urutan').length - 1]);
+    setSelectChosen(document.querySelectorAll('.jenis-urutan')[document.querySelectorAll('.jenis-urutan').length - 1]);
+  }
+
+ function removeUrutan(element)
+  { element.parentNode.remove();
+  }
+
+ function urutkan()
+  { document.getElementById('saved-urutan').value = '';
+    var data_urutan = [];
+    var a = document.querySelectorAll('select.field-urutan');
+    for(var i=0; i<a.length; i++)
+     { if(document.querySelectorAll('select.field-urutan')[i].value !== '' && document.querySelectorAll('select.jenis-urutan')[i].value !== '')
+        { var valueToPush = {};
+          valueToPush.field_urutan = document.querySelectorAll('select.field-urutan')[i].value;
+          valueToPush.jenis_urutan = document.querySelectorAll('select.jenis-urutan')[i].value;
+          data_urutan.push(valueToPush);
+        }
+     }
+    document.getElementById('saved-urutan').value = JSON.stringify(data_urutan);
+    document.getElementsByClassName('loader')[0].style['display'] = 'block';
+    document.getElementsByClassName('loader-block')[0].style['display'] = 'block';
+    tampil();
+    hideModal('popUpUrutkan');
+  }
+
+ function view(element)
+  { var list = document.getElementsByClassName(element.className);
+    list = [].slice.call(list);
+    var position = list.indexOf(element);
+    document.getElementsByClassName('loader')[0].style['display'] = 'block';
+    document.getElementsByClassName('loader-block')[0].style['display'] = 'block';
+    document.querySelector('#popUpView .modal-title').innerHTML = document.getElementsByClassName('email-header')[position].innerHTML;
+    var formdata = new FormData();
+    formdata.append('user_id', document.querySelector('.user-id').value);
+    formdata.append('username', document.querySelector('.user-name').value);
+    formdata.append('token', document.querySelector('.user-token').value);
+    formdata.append('users_level_id', document.querySelector('.user-level_id').value);
+    formdata.append('cabang_id', document.querySelector('.user-cabang_id').value);
+    formdata.append('id', document.getElementsByClassName('textarea_edit-id')[position].value);
+    var ajax = new XMLHttpRequest();
+    ajax.addEventListener('load', responseView, false);
+    ajax.open('POST', '<?= $_POST['url'] ?>/action/<?= $_POST['form'] ?>/view.php', true);
+    ajax.send(formdata);
+    /*
+    document.querySelector('#popUpView .modal-body').innerHTML = document.getElementsByClassName('email-body')[position].innerHTML;*/
+  }
+
+ function responseView()
+  { document.getElementsByClassName('loader')[0].style['display'] = 'none';
+    document.getElementsByClassName('loader-block')[0].style['display'] = 'none';
+    document.querySelector('#popUpView .modal-body').innerHTML = event.srcElement.response;
+    showModal('popUpView');
   }
 
 </script>
