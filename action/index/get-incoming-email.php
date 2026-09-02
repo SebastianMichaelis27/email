@@ -83,7 +83,7 @@
         { $data2 = array();
           $data2[] = $id;
           $data2[] = $attachment['filename'];
-          $data2[] = date('Y-m-d H:i:s');
+          $data2[] = $date;
           $data2[] = $attachment['base64'];
           $params2 = implode(',', array_fill(0, count($data2), '?'));
           $types2 = implode('', array_fill(0, count($data2), 's'));

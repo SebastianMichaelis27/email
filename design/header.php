@@ -783,6 +783,18 @@
      -webkit-line-clamp: 1; /* Jumlah baris maksimal */
      -webkit-box-orient: vertical;
    }
+  .btn-menu
+   { width : calc(100% - 40px);
+     margin-bottom : 20px;
+     border : 1px solid silver;
+     padding : 5px;
+     border-radius : 5px;
+     font-weight : bold;
+     background : #fff;
+   }
+  .btn-menu:active
+   { background : #eee;
+   }
  </style>
 </head>
 <body>
@@ -806,9 +818,8 @@
      <img src="img/logo.png">
      <span class="title"><?= $_SESSION['username'] ?? '' ?></span>
     </div>
-    <ul class="menu">
-     
-    </ul>
+    <center><button class="btn-menu">Buat Email <i class="fas fa-pencil-alt"></i></button></center>
+    <ul class="menu"></ul>
    </div>
   </div>
   <div class="side-right">

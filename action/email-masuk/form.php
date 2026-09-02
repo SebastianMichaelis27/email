@@ -17,6 +17,27 @@
  label
   { user-select : none;
   }
+ .link-file
+  { width : 386px;
+    height : 20px;
+    max-height : 20px;
+    background-color : rgb(245,245,245);
+    margin : 6px 0px;
+    padding : 10px;
+    color : rgb(34,34,34);
+    font : 14px/20px "Google Sans",sans-serif;
+    border : 1px solid rgb(221,221,221);
+    cursor : pointer;
+  }
+ .link-file .file-name:hover
+  { text-decoration : underline;
+  }
+ .link-file img
+  { vertical-align : text-bottom;
+    border : none;
+    padding-right : 10px;
+    height : 20px;
+  }
 </style>
 
 <div class="box">
@@ -612,6 +633,15 @@
     document.querySelector('#popUpView .modal-body').innerHTML = event.srcElement.response;
     tampil();
     showModal('popUpView');
+  }
+
+ function downloadFile(element)
+  { const link = document.createElement('a');
+    link.href = element.querySelector('a').href;
+    link.download = element.querySelector('.file-name').textContent;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
 
 </script>

@@ -165,22 +165,8 @@
  $result = $sql->get_result();
  $dataRows = $result->fetch_all(MYSQLI_ASSOC);
 
- $incoming_email_id = array_values(array_unique(array_column($dataRows, 'id')));
- $placeholders = implode(',', array_fill(0, count($incoming_email_id), '?'));
- $types = str_repeat('i', count($incoming_email_id));
-
- $attachments = array();
- if(count($incoming_email_id) > 0)
-  { $sql = $koneksi->prepare("select * from incoming_email_attachments where incoming_email_id in (".$placeholders.")");
-    $sql->bind_param($types, ...$incoming_email_id);
-    $sql->execute();
-    $result = $sql->get_result();
-    $attachments = $result->fetch_all(MYSQLI_ASSOC);
-  }
-
  $list = "";
  $DataEdit = "";
- $sekali = 0;
  for($i=0; $i<count($dataRows); $i++)
   { preg_match('/&lt;(.*?)&gt;/', htmlspecialchars($dataRows[$i]['from']), $matches);
     $from = $matches[1] ?? null;
@@ -190,33 +176,11 @@
      }
     $dataRows[$i]['from'] = trim(str_replace("<".$from.">", "", $dataRows[$i]['from']));
 
-    $id = $dataRows[$i]['id'];
-    $dataAttachments = array_values(array_filter($attachments, function($var) use($id) {
-     return (strval($var['incoming_email_id']) == strval($id));
-    }));
-    $list_file = "";
-    foreach($dataAttachments as $key => $value)
-     { $extension = strtolower(pathinfo($value['name'], PATHINFO_EXTENSION));
-       $list_file .= '<br><a href="files/incoming-email-attachments/'.$value['id'].'.'.$extension.'" target="blank">'.$value['name'].'</a>';
-
-       if($sekali == 0)
-        { $sekali = 1;
-          //file_put_contents($lokasi_folder.$value['name'], base64_decode($value['body']));
-        }
-     }
-
     $DataEdit .= '<textarea class="textarea_edit-id">'.$dataRows[$i]['id'].'</textarea>
                   <div class="email-header">
                    <b>'.$dataRows[$i]['from'].'</b><br>
                    <small>'.$from.'</small>
                   </div>';
-    /*
-                  <div class="email-body">
-                   <b style="color:#1b7736;">'.$dataRows[$i]['subject'].'</b>
-                   <div style="border:1px solid silver; border-radius:3px; padding:10px; margin-top:10px;">
-                    '.$dataRows[$i]['body'].$list_file.'
-                   </div>
-                  </div>*/
 
     $bold = ($dataRows[$i]['seen'] == 0 ? ' style="font-weight:bold;"' : '');
     $list .= '<tr class="group-hover view" onclick="view(this);">

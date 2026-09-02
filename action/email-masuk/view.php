@@ -30,7 +30,11 @@
  foreach($attachments as $key => $value)
   { $extension = strtolower(pathinfo($value['name'], PATHINFO_EXTENSION));
     if(file_put_contents($lokasi_folder.$value['kode'].'.'.$extension, base64_decode($value['body'])))
-     { $list_file .= '<br><a href="files/incoming-email-attachments/'.$value['kode'].'.'.$extension.'" target="blank">'.$value['name'].'</a>';
+     { $list_file .= '<div class="link-file" onclick="downloadFile(this);">
+                       <img src="https://ssl.gstatic.com/docs/doclist/images/icon_10_generic_list.png">
+                       <span class="file-name">'.$value['name'].'</span>
+                       <a href="files/incoming-email-attachments/'.$value['kode'].'.'.$extension.'"></a>
+                      </div>';
      }
   }
 
