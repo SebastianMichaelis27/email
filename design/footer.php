@@ -112,13 +112,16 @@
   function responseGetIncomingEmail()
    { var a = document.createElement('div');
      a.innerHTML = event.srcElement.response;
-     if(a.querySelectorAll('new').length > 0)
+     if(a.querySelectorAll('.new').length > 0)
       { getIncomingEmail();
+        if(document.querySelector('.last_actual_link').value.toString().replaceAll('.php', '') == 'email-masuk')
+         { tampil();
+         }
       }
      else
       { setTimeout(function() {
          getIncomingEmail();
-        }, 600000);
+        }, 60000);
       }
    }
 

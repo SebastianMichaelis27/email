@@ -610,6 +610,7 @@
   { document.getElementsByClassName('loader')[0].style['display'] = 'none';
     document.getElementsByClassName('loader-block')[0].style['display'] = 'none';
     document.querySelector('#popUpView .modal-body').innerHTML = event.srcElement.response;
+    tampil();
     showModal('popUpView');
   }
 

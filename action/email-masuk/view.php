@@ -34,6 +34,10 @@
      }
   }
 
+ $sql = $koneksi->prepare("update incoming_email set seen = 1 where id = ?");
+ $sql->bind_param("i", $id);
+ $sql->execute();
+
 ?>
 
 <b style="color:#1b7736;"><?= $data['subject'] ?></b>
