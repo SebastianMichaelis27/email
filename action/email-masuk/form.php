@@ -173,7 +173,7 @@
 <div class="modal" id="popUpView">
  <div class="modal-dialog">
   <div class="modal-content" style="max-width:1000px;">
-   <div class="modal-header success">
+   <div class="modal-header primary">
     <div class="modal-title">Email Masuk</div>
     <div class="close" onclick="hideModal('popUpView');">&times</div>
    </div>
@@ -188,7 +188,7 @@
 <script type="text/javascript">
 
  var Nama_Tabel = 'incoming_email';
- var maxRecord = 20;
+ var maxRecord = 10;
 
  var a = document.querySelectorAll('.field-input');
  for(var i=0; i<a.length; i++)

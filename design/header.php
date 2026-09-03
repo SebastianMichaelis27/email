@@ -795,6 +795,13 @@
   .btn-menu:active
    { background : #eee;
    }
+  .list-file
+   { display : grid;
+     grid-template-columns : auto 1fr;
+     gap : 10px;
+     align-items : center;
+     margin-bottom : 5px;
+   }
  </style>
 </head>
 <body>
@@ -818,7 +825,7 @@
      <img src="img/logo.png">
      <span class="title"><?= $_SESSION['username'] ?? '' ?></span>
     </div>
-    <center><button class="btn-menu">Buat Email <i class="fas fa-pencil-alt"></i></button></center>
+    <center><button class="btn-menu" onclick="buatEmail();">Kirim Email <i class="fas fa-pencil-alt"></i></button></center>
     <ul class="menu"></ul>
    </div>
   </div>

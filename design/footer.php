@@ -47,6 +47,56 @@
    </div>
   </div>
  </div>
+
+ <div class="modal" id="popUpKirimEmail">
+  <div class="modal-dialog">
+   <div class="modal-content" style="max-width:1000px;">
+    <div class="modal-header success">
+     <div class="modal-title">Kirim Email</div>
+     <div class="close" onclick="hideModal('popUpKirimEmail');">&times</div>
+    </div>
+    <div class="modal-body">
+     <div class="form-input">
+      <b>To *</b>
+      <div>
+       <select class="field-input_email" required id="send_email-to" multiple="true">
+        <option></option>
+       </select>
+       <div class="error-input"></div>
+      </div>
+      <b>Cc</b>
+      <div>
+       <select class="field-input_email" id="send_email-cc" multiple="true">
+        <option></option>
+       </select>
+       <div class="error-input"></div>
+      </div>
+      <b>Subject *</b>
+      <div>
+       <input type="text" class="field-input_email" required id="send_email-subject">
+       <div class="error-input"></div>
+      </div>
+      <b>Body</b>
+      <div>
+       <textarea spellcheck="false" style="resize:none; overflow:hidden; min-height:100px;" oninput="auto_grow(this);" class="field-input_email" id="send_email-body"></textarea>
+       <div class="error-input"></div>
+      </div>
+      <b>File</b>
+      <div>
+       <input type="file" style="display:none;" onchange="pilihAttachment(this);" id="send_email-file">
+       <button type="button" class="btn-default" onclick="document.getElementById('send_email-file').click();">Pilih File</button>
+       <div class="error-input"></div>
+       <div id="send_email-list_file"></div>
+      </div>
+     </div>
+    </div>
+    <div class="modal-footer">
+     <button type="button" class="btn-default" onclick="hideModal('popUpKirimEmail');"><i class="fas fa-times"></i> Batal</button>
+     <button type="button" class="btn-success" onclick="kirimEmail();"><i class="fas fa-paper-plane"></i> Kirim</button>
+    </div>
+   </div>
+  </div>
+ </div>
      
  <script type="text/javascript" src="plugin/select-chosen/select-chosen.js"></script>
  <script type="text/javascript" src="plugin/multiple-select-picker/multiple-select-picker.js"></script>
@@ -54,9 +104,128 @@
 
  <script>
 
+  initMultipleSelect(document.getElementById('send_email-to'), true, null, {}, true);
+  initMultipleSelect(document.getElementById('send_email-cc'), true, null, {}, true);
+
   window.addEventListener('resize', function() {
    setMenuClick();
   });
+
+  function buatEmail()
+   { showModal('popUpKirimEmail');
+   }
+
+  function pilihAttachment(element)
+   { const file = element.files[0];
+     if (!file) return;
+
+     const maxSize = 20 * 1024 * 1024; // 20 MB
+     if(file.size > maxSize)
+      { element.parentNode.querySelector('.error-input').innerHTML = 'Ukuran File Maksimal 20MB';
+        return;
+      }
+     else
+      { element.parentNode.querySelector('.error-input').innerHTML = '';
+      }
+
+     const reader = new FileReader();
+     reader.onload = function (e) {
+      const base64 = e.target.result;
+      var new_element = document.createElement('div');
+      new_element.className = 'list-file';
+      new_element.innerHTML = `
+       <a href="` + base64 + `">` + file.name + `</a>
+       <div><button class="btn-danger" onclick="hapusAttachment(this);">×</button></div>
+      `;
+
+      document.getElementById('send_email-list_file').appendChild(new_element);
+     };
+     reader.readAsDataURL(file);
+   }
+
+  function hapusAttachment(element)
+   { element.parentNode.parentNode.remove();
+   }
+
+  function kirimEmail()
+   { var data = {};
+     var error = 0;
+
+     var a = document.querySelectorAll('.field-input_email');
+     for(var i=0; i<a.length; i++)
+      { var parent = a[i].parentNode;
+        if(a[i].parentNode.classList.contains('custom-select') || a[i].parentNode.classList.contains('multiple-select') || a[i].id == "harga" || a[i].id == "diskon")
+         { parent = a[i].parentNode.parentNode;
+         }
+        else if(a[i].parentNode.classList.contains('box-input-calender'))
+         { parent = a[i].parentNode.parentNode.parentNode;
+         }
+        parent.querySelector('.error-input').innerHTML = '';
+        if(a[i].id == 'send_email-to' && (a[i].value == '[]' || a[i].value == ''))
+         { parent.querySelector('.error-input').innerHTML = 'Wajib diisi!';
+         }
+        if(a[i].required == true && a[i].value == '')
+         { error++;
+           parent.querySelector('.error-input').innerHTML = 'Wajib diisi!';
+         }
+        if(a[i].id !== '' && a[i].value !== '')
+         { if(a[i].parentNode.classList.contains('box-input-calender'))
+            { data[a[i].id] = normalisasi_tanggal(a[i].value);
+            }
+           else if(a[i].onkeypress)
+            { if(a[i].onkeypress.toString().includes('hanyaAngka'))
+               { data[a[i].id] = normal(a[i].value) * 1;
+               }
+              else
+               { data[a[i].id] = a[i].value;
+               }
+            }
+           else
+            { data[a[i].id] = a[i].value;
+            }
+         }
+        else
+         { data[a[i].id] = null;
+         }
+      }
+
+     var attachments = [];
+     var a = document.querySelectorAll('#send_email-list_file a');
+     for(i=0; i<a.length; i++)
+      { var valueToPush = {};
+        valueToPush.name = a[i].textContent; 
+        valueToPush.base64 = a[i].href; 
+        attachments.push(valueToPush);
+      }
+
+     if(error == 0)
+      { document.getElementsByClassName('loader')[0].style['display'] = 'block';
+        document.getElementsByClassName('loader-block')[0].style['display'] = 'block';
+        var formdata = new FormData();
+        formdata.append('user_id', document.querySelector('.user-id').value);
+        formdata.append('username', document.querySelector('.user-name').value);
+        formdata.append('token', document.querySelector('.user-token').value);
+        formdata.append('users_level_id', document.querySelector('.user-level_id').value);
+        formdata.append('cabang_id', document.querySelector('.user-cabang_id').value);
+        Object.entries(data).forEach(function([index, item]) {
+         formdata.append('data[' + index + ']', item);
+        });
+        Object.entries(attachments).forEach(function([index, item]) {
+         formdata.append('attachments[' + index + '][name]', item.name);
+         formdata.append('attachments[' + index + '][base64]', item.base64);
+        });
+        var ajax = new XMLHttpRequest();
+        ajax.addEventListener('load', responseKirimEmail, false);
+        ajax.open('POST', '<?= $url ?>/action/index/kirim-email.php');
+        ajax.send(formdata);
+      }
+   }
+
+  function responseKirimEmail()
+   { document.getElementsByClassName('loader')[0].style['display'] = 'none';
+     document.getElementsByClassName('loader-block')[0].style['display'] = 'none';
+     alert(event.srcElement.response);
+   }
 
   function loadMenu()
    { var formdata = new FormData();

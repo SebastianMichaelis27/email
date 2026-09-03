@@ -1,4 +1,4 @@
-function initMultipleSelect(select, allow_new = false, url = null, parameter = {})
+function initMultipleSelect(select, allow_new = false, url = null, parameter = {}, email_only = false)
  { if(!select) return;
 
    const wrapper = document.createElement('div');
@@ -200,6 +200,8 @@ function initMultipleSelect(select, allow_new = false, url = null, parameter = {
 
     const value = e.target.dataset.value;
     const text = e.target.textContent;
+
+    if(email_only && !ValidateEmail(value)) return;
 
     let data = getData();
     const idx = data.findIndex(d => d.value === value);
