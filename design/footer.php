@@ -224,7 +224,35 @@
   function responseKirimEmail()
    { document.getElementsByClassName('loader')[0].style['display'] = 'none';
      document.getElementsByClassName('loader-block')[0].style['display'] = 'none';
-     alert(event.srcElement.response);
+     var a = document.createElement('div');
+     a.innerHTML = event.srcElement.response;
+     if(a.querySelectorAll('.success').length > 0)
+      { clearDrafEmail();
+        hideModal('popUpKirimEmail');
+      }
+   }
+
+  function clearDrafEmail()
+   { document.getElementById('edit-id').value = "";
+     var a = document.querySelectorAll('.field-input_email');
+     for(var i=0; i<a.length; i++)
+      { a[i].value = '';
+        if(a[i].parentNode.classList.contains('custom-select'))
+         { setSelectChosen(a[i]);
+         }
+        else if(a[i].parentNode.classList.contains('multiple-select'))
+         { a[i].parentNode.querySelectorAll('.tag').forEach(el => {
+            if(el !== a[i])
+             { el.remove();
+             }
+           });
+         }
+      }
+     var a = document.querySelectorAll('.error-input');
+     for(var i=0; i<a.length; i++)
+      { a[i].innerHTML = '';
+      }
+     document.getElementById('send_email-list_file').innerHTML = '';
    }
 
   function loadMenu()
